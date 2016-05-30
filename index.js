@@ -33,9 +33,13 @@ function read (size) {
   var length = 0;
   var ticksLeft = this._maxTicks;
   
-  current = iterator();
   shouldPush = true;
-  while (shouldPush && current) {
+  while (shouldPush) {
+    current = iterator();
+    if (current == null) {
+      return stringify.push();
+    }
+    
     toPush = null;
     switch(current.type) {
       case 'object':
@@ -66,9 +70,7 @@ function read (size) {
     shouldPush = stringify.push(toPush);
     shouldPush = shouldPush && (length < size);
     if(--ticksLeft === 0) break;
-    current = iterator();
   }
-  if(!current) stringify.push();
 }
 
 function commaIfNeeded (state) {
